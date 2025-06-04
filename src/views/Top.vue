@@ -69,7 +69,7 @@ const options = ref([
 import { useMessage } from "naive-ui";
 const message = useMessage();
 const handleSelect = (key) => {
-  message.info("开发中...");
+  message.info("开发中....");
   return 
   router.push({ name: key });
 };
