@@ -75,7 +75,7 @@
           :size="100"
           :src="userInfo.fields[11].value"
           round
-          style="cursor: pointer"
+          style="cursor: pointer;position: absolute;right: 0"
         />
       </div>
       <div
