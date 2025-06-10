@@ -62,11 +62,11 @@ const options = ref([
 import { useMessage } from "naive-ui";
 const message = useMessage();
 const handleSelect = (key) => {
-  if (key === "edit") {
-    let id = localStorage.getItem("resumeIndex") || 0;
-    router.push({ name: key, params: { id: id } });
-  }
-  router.push({ name: key });
+
+    let index = localStorage.getItem("templateIndex") || 0;
+    router.push({ name: key, params: { index:index } });
+  
+
 };
 const isCloseMenu = ref(false);
 const screenResize = () => {

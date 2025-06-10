@@ -169,6 +169,9 @@ const templateOptions = [
   { label: "双栏模板3", key: "2-3" },
 ];
 const handleSelectTemplate = (value) => {
+  let index = +(value.split("-")[0]-1)*3 + +(value.split("-")[1]);
+  console.log('%c [ index ]-173', 'font-size:13px; background:pink; color:#bf2c9f;', index)
+  localStorage.setItem("templateIndex", index);
   curResumeIndex.value = value;
   router.push(`/edit/${value}`);
 };
@@ -666,6 +669,7 @@ const addOne = (title) => {
   justify-content: center;
   box-shadow: 0 1px 3px 1px #3c404326;
   margin-left: 10px;
+  flex-shrink: 0;
 }
 .title-text {
   font-weight: bold;

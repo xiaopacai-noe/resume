@@ -15,7 +15,7 @@ const routers = [
         component: EditResume,
       },
       {
-        path: "template",
+        path: "template/:index",
         name: "template",
         component: Template,
       },
