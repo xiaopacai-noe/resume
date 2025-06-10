@@ -28,6 +28,9 @@
           </template>
         </Info>
       </TransitionGroup>
+      <a href="https://github.com/xiaopacai-noe/resume" target="_blank" rel="noopener noreferrer" style="float: right;margin-right:10px;">
+        <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/xiaopacai-noe/resume" />
+      </a>
     </div>
     <!-- <div class="resize" ref="resizeRef">
       <n-divider dashed :vertical="true" style="height: 100%"> 虚线 </n-divider>
@@ -38,12 +41,12 @@
 
     <Teleport to="#template-export">
       <n-dropdown trigger="hover" :options="downloadOptions" @select="handleSelectdownload">
-        <n-button >导出</n-button>
+        <n-button>导出</n-button>
       </n-dropdown>
     </Teleport>
     <Teleport to="#template-select">
       <n-dropdown trigger="hover" :options="templateOptions" @select="handleSelectTemplate">
-        <n-button >模板选择</n-button>
+        <n-button>模板选择</n-button>
       </n-dropdown>
     </Teleport>
   </div>
@@ -51,8 +54,8 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useModuleThStore } from "@/store";
-import {  useRoute,useRouter } from "vue-router";
-const router = useRouter()
+import { useRoute, useRouter } from "vue-router";
+const router = useRouter();
 const route = useRoute();
 let curResumeIndex = ref(route.path.split("/").pop());
 const moduleThStore = useModuleThStore();
@@ -63,9 +66,7 @@ const resumeStyleStore = useResumeStyleStore();
 const { resumeStyle } = storeToRefs(resumeStyleStore);
 const value = ref("");
 const resumeRef = ref();
-const downloadOptions = ref([
-  { label: "PDF (A4)", key: "pdf" },
-]);
+const downloadOptions = ref([{ label: "PDF (A4)", key: "pdf" }]);
 import html2pdf from "html2pdf.js";
 const handleSelectdownload = (value) => {
   //todo: 实现下载功能
