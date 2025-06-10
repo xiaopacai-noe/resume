@@ -38,13 +38,7 @@ import { useRouter, useRoute } from "vue-router";
 const router = useRouter();
 const value = ref("");
 const menuItems = ref([
-  {
-    key: "edit",
-    label: "制作简历",
-    svgNs: "http://www.w3.org/2000/svg",
-    viewBox: "0 0 24 24",
-    path: "M9 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-3M9 15h3l8.5-8.5a1.5 1.5 0 0 0-3-3L9 12v3M16 5l3 3",
-  },
+ 
   {
     key: "template",
     label: "简历模版",
@@ -62,21 +56,22 @@ const menuItems = ref([
 ]);
 
 const options = ref([
-  
   { label: "简历模版", key: "template" },
   { label: "AI润色", key: "ai" },
 ]);
 import { useMessage } from "naive-ui";
 const message = useMessage();
 const handleSelect = (key) => {
-  message.info("开发中....");
-  return 
+  if (key === "edit") {
+    let id = localStorage.getItem("resumeIndex") || 0;
+    router.push({ name: key, params: { id: id } });
+  }
   router.push({ name: key });
 };
 const isCloseMenu = ref(false);
 const screenResize = () => {
   window.addEventListener("resize", (e) => {
-    if (router.currentRoute.value.name === "edit") return;
+    if (router.currentRoute.value.name !== "edit") return;
     const screenWidth = window.innerWidth;
     if (screenWidth <= 600) isCloseMenu.value = true;
     else {
@@ -89,11 +84,11 @@ const route = useRoute();
 watch(
   () => route.path,
   (newPath) => {
-    isCloseMenu.value = newPath.split("/").pop() === "edit";
+    isCloseMenu.value = newPath.includes("edit");
   }
 );
 onMounted(() => {
-  screenResize();
+  // screenResize();
 });
 </script>
 
@@ -108,7 +103,7 @@ onMounted(() => {
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
   position: relative;
   z-index: 10;
-  padding-right: 100px;
+  flex-shrink: 0;
 }
 
 .open-menu {
@@ -154,7 +149,6 @@ onMounted(() => {
     }
   }
 }
-
 svg {
   height: 24px;
   width: 24px;

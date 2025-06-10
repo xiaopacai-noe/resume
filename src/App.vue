@@ -1,7 +1,6 @@
 <script setup>
 import { nextTick } from "vue";
 import Top from "./views/Top.vue";
-
 </script>
 
 <template>
@@ -10,7 +9,6 @@ import Top from "./views/Top.vue";
       <n-dialog-provider>
         <Top />
       </n-dialog-provider>
-
       <router-view> </router-view>
     </n-message-provider>
   </div>

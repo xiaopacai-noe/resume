@@ -33,30 +33,43 @@
       <n-divider dashed :vertical="true" style="height: 100%"> 虚线 </n-divider>
     </div> -->
     <div class="right" ref="rightRef">
-      <PreViewResume ref="resumeRef" :allData />
+      <PreViewResume ref="resumeRef" :allData :curResumeIndex />
     </div>
-    <n-dropdown trigger="hover" :options="downloadOptions" @select="handleSelectdownload">
-      <n-button style="position: fixed; top: 12px; right: 20px; z-index: 1000">下载</n-button>
-    </n-dropdown>
+
+    <Teleport to="#template-export">
+      <n-dropdown trigger="hover" :options="downloadOptions" @select="handleSelectdownload">
+        <n-button >导出</n-button>
+      </n-dropdown>
+    </Teleport>
+    <Teleport to="#template-select">
+      <n-dropdown trigger="hover" :options="templateOptions" @select="handleSelectTemplate">
+        <n-button >模板选择</n-button>
+      </n-dropdown>
+    </Teleport>
   </div>
 </template>
 <script setup>
 import { storeToRefs } from "pinia";
 import { useModuleThStore } from "@/store";
+import {  useRoute,useRouter } from "vue-router";
+const router = useRouter()
+const route = useRoute();
+let curResumeIndex = ref(route.path.split("/").pop());
 const moduleThStore = useModuleThStore();
 const { haveModules, enterIndex, haveModuleCount } = storeToRefs(moduleThStore);
 import PreViewResume from "./PreViewResume.vue";
+import { useResumeStyleStore } from "@/store";
+const resumeStyleStore = useResumeStyleStore();
+const { resumeStyle } = storeToRefs(resumeStyleStore);
 const value = ref("");
 const resumeRef = ref();
 const downloadOptions = ref([
   { label: "PDF (A4)", key: "pdf" },
-  { label: "Word (A4)", key: "word" },
 ]);
 import html2pdf from "html2pdf.js";
 const handleSelectdownload = (value) => {
   //todo: 实现下载功能
   if (value === "pdf") {
-    console.log("%c [ pdf ]-58", "font-size:13px; background:pink; color:#bf2c9f;", resumeRef.value.previewResumeRef);
     html2pdf()
       .set({
         margin: 0,
@@ -64,8 +77,9 @@ const handleSelectdownload = (value) => {
         image: { type: "jpeg", quality: 0.98 },
         html2canvas: { scale: 4 }, // 提高清晰度
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        pagebreak: { mode: "avoid-all" },
       })
-      .from(resumeRef.value.previewResumeRef)
+      .from(resumeRef.value.$el)
       .save();
     //pdf
   } else {
@@ -145,6 +159,18 @@ const options = computed(() => {
     };
   });
 });
+const templateOptions = [
+  { label: "单栏模板1", key: "1-1" },
+  { label: "单栏模板2", key: "1-2" },
+  { label: "单栏模板3", key: "1-3" },
+  { label: "双栏模板1", key: "2-1" },
+  { label: "双栏模板2", key: "2-2" },
+  { label: "双栏模板3", key: "2-3" },
+];
+const handleSelectTemplate = (value) => {
+  curResumeIndex.value = value;
+  router.push(`/edit/${value}`);
+};
 const isDrag = ref(false);
 const boxRef = ref();
 const leftRef = ref();
@@ -358,6 +384,7 @@ watch(haveModuleCount, (newVal, oldVal) => {
     });
   }
 });
+
 const mousedown = (e, leftMinWidth = 200, rightMinWidth = 200) => {
   const leftDom = leftRef.value,
     rightDom = rightRef.value;
@@ -410,11 +437,14 @@ const inputChange = (val, titleKey, key) => {
   allData.value.filter((item) => item.key === titleKey).fields.filter((field) => field.key === key).value = val;
 };
 import { useMessage } from "naive-ui";
+import { watch } from "vue";
+import { onMounted } from "vue";
+import { onBeforeMount } from "vue";
 const message = useMessage();
 function handleKeyDown(event) {
   // 判断是否按下了 Ctrl + S
   if ((event.ctrlKey || event.metaKey) && event.key === "s") {
-    event.preventDefault(); // 阻止浏览器默认保存行为
+    event.preventDefault();
     localStorage.setItem("resumeData", JSON.stringify(allData.value));
     message.success("保存成功");
   }
@@ -425,19 +455,24 @@ onMounted(() => {
   // window.addEventListener("resize", screenResize);
   // sideItem(); 为啥添加初始动画 ，transitionGroup组件不生效了
   window.addEventListener("keydown", handleKeyDown);
+  let ResumeIndex = localStorage.getItem("ResumeIndex") || 0;
+  if (!ResumeIndex) {
+    localStorage.setItem("ResumeIndex", ResumeIndex);
+  }
 });
 onBeforeUnmount(() => {
   window.removeEventListener("keydown", handleKeyDown);
+  localStorage.setItem("resumeData", JSON.stringify(allData.value));
 });
-// 监听页面可见性变化
+// 保存数据
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
     localStorage.setItem("resumeData", JSON.stringify(allData.value));
   }
 });
-
-// 关闭页面时提示保存
+// 保存数据
 window.addEventListener("beforeunload", (e) => {
+  console.log("%c [ beforeunload ]-456", "font-size:13px; background:pink; color:#bf2c9f;", beforeunload);
   localStorage.setItem("resumeData", JSON.stringify(allData.value));
 });
 const handleLeftBcChange = (value) => {
@@ -628,6 +663,8 @@ const addOne = (title) => {
   scrollbar-width: none;
   display: flex;
   justify-content: center;
+  box-shadow: 0 1px 3px 1px #3c404326;
+  margin-left: 10px;
 }
 .title-text {
   font-weight: bold;

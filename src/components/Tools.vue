@@ -88,15 +88,11 @@
       <div class="add-content" @dragstart="handleDragStart" @dragover="handleDragOver">
         <span style="font-weight: bold">已添加模块</span>
         <TransitionGroup name="list" tag="div">
-          <div
-            class="module-item"
-            v-for="(item, index) in haveModules"
-            :key="item"
-            draggable="true"
-            :data-index="index"
-          >
-            {{ item }}
-          </div>
+          <template v-for="(item, index) in haveModules" :key="item">
+            <div class="module-item" draggable="true" :data-index="index" v-if="item!=='基本信息'">
+              {{ item }}
+            </div>
+          </template>
         </TransitionGroup>
       </div>
       <div class="no-content" @click="addModule($event.target.textContent.replace('+', '').trim())">
@@ -104,15 +100,16 @@
         <div class="module-item" v-for="item in noModules" :key="item">{{ item }} <span>+</span></div>
       </div>
     </n-popover>
-
+    <div id="template-select"></div>
+    <data id="template-export"></data>
   </div>
 </template>
 <script setup>
 import { ref } from "vue";
-import {storeToRefs} from "pinia";
+import { storeToRefs } from "pinia";
 import { useResumeStyleStore, useModuleThStore } from "@/store";
 const moduleThStore = useModuleThStore();
-const {haveModules, noModules} = storeToRefs(moduleThStore);
+const { haveModules, noModules } = storeToRefs(moduleThStore);
 const resumeStyleStore = useResumeStyleStore();
 
 const fontSizeValue = ref(resumeStyleStore.resumeStyle.fontSize);
@@ -141,6 +138,7 @@ const lineHeightOptions = ref([
 ]);
 const marginValue = ref(resumeStyleStore.resumeStyle.pagePadding);
 const marginOptions = ref([
+  { label: "0px", value: "0" },
   { label: "10px", value: "10" },
   { label: "20px", value: "20" },
   { label: "30px", value: "30" },
@@ -227,8 +225,8 @@ svg {
   justify-content: space-between;
   width: 150px;
   padding: 5px 10px;
-  cursor: move;
   user-select: none;
+  cursor: move;
   &:hover {
     background-color: #f0f0f0;
   }

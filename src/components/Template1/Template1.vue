@@ -1,13 +1,16 @@
 <template>
-  <div style="height: 100%; width: 100%; display: flex; flex-direction: column;position: relative;">
+  <div style="width: 100%; display: flex; flex-direction: column; position: relative">
     <transition-group name="list">
+      <!-- 基本信息 -->
       <div
         key="userInfo"
         class="info-item"
         :style="{ display: 'flex', 'justify-content': 'space-between', 'align-items': 'center', order: userInfoOrder }"
       >
         <div style="text-align: center; flex: 1">
-          <h1 v-if="userInfo.fields[0].value">{{ userInfo.fields[0].value }}</h1>
+          <div v-if="userInfo.fields[0].value" style="font-size: 1.5em; font-weight: bold">
+            {{ userInfo.fields[0].value }}
+          </div>
 
           <div
             style="display: flex; justify-content: center"
@@ -70,23 +73,18 @@
             <div v-if="userInfo.fields[2].value">{{ userInfo.fields[2].value }}</div>
           </div>
         </div>
-        <n-avatar
-          v-if="userInfo.fields[11].value"
-          :size="100"
-          :src="userInfo.fields[11].value"
-          round
-          style="cursor: pointer;position: absolute;right: 0"
-        />
+        <n-avatar v-if="userInfo.fields[11].value" :size="100" :src="userInfo.fields[11].value" round />
       </div>
+      <!-- 教育经历 -->
       <div
         key="education_experience"
         :style="{ order: education_experienceOrder }"
         class="info-item"
         v-if="education_experience?.length"
       >
-        <ResumeInfoItem title="教育背景"> </ResumeInfoItem>
+        <component :is="ResumeInfoItem" title="教育背景" class="row"> </component>
         <div v-for="item in education_experience" class="education-item" :key="item.key">
-          <div style="display: flex; justify-content: space-between">
+          <div style="display: flex; justify-content: space-between" class="row">
             <span>
               <span v-if="item.fields[0].value" style="font-weight: bold">{{ item.fields[0].value }}</span>
               <span v-if="item.fields[1].value"> - {{ item.fields[1].value }}</span>
@@ -102,19 +100,20 @@
               {{ timestampToYearMonth(item.fields[2].value[1]) }}
             </span>
           </div>
-          <div v-if="item.fields[4].value">专业成绩: {{ item.fields[4].value }}</div>
-          <div v-if="item.fields[5].value">主修课程: {{ item.fields[5].value }}</div>
+          <div v-if="item.fields[4].value" class="row">专业成绩: {{ item.fields[4].value }}</div>
+          <div v-if="item.fields[5].value" class="row">主修课程: {{ item.fields[5].value }}</div>
         </div>
       </div>
+      <!-- 项目经历 -->
       <div
         key="work_experience"
         :style="{ order: work_experienceOrder }"
         class="info-item"
         v-if="work_experience?.length"
       >
-        <ResumeInfoItem title="工作经历"> </ResumeInfoItem>
+        <component :is="ResumeInfoItem" title="工作经历" class="row"> </component>
         <div v-for="item in work_experience" :key="item.key">
-          <div style="display: flex; justify-content: space-between">
+          <div style="display: flex; justify-content: space-between" class="row">
             <span
               ><span style="font-weight: bold">{{ item.fields[0].value }}</span> - {{ item.fields[1].value }}
               {{ item.fields[3].value }}</span
@@ -124,23 +123,27 @@
               {{ timestampToYearMonth(item.fields[2].value[1]) }}</span
             >
           </div>
-          <div>使用技术栈:{{ item.fields[4].value }}</div>
-          <div>工作描述:{{ item.fields[5].value }}</div>
+          <div class="row">使用技术栈:{{ item.fields[4].value }}</div>
+          <div class="row">工作描述:{{ item.fields[5].value }}</div>
         </div>
       </div>
+      <!-- 实习/工作经历 -->
       <div key="skill" :style="{ order: skillOrder }" class="info-item" v-if="skill?.fields?.length">
-        <ResumeInfoItem title="技能清单"> </ResumeInfoItem>
-        <div class="skill-item" v-for="item in skill.fields" :key="item.value">{{ item.value }}</div>
+        <component :is="ResumeInfoItem" title="技能清单" class="row"> </component>
+        <template v-for="item in skill.fields" :key="item.value">
+          <div class="skill-item row" v-if="item.value">{{ item.value }}</div>
+        </template>
       </div>
+      <!-- 技能清单 -->
       <div
         key="project_experience"
         :style="{ order: project_experienceOrder }"
         class="info-item"
         v-if="project_experience?.length"
       >
-        <ResumeInfoItem title="项目经历"> </ResumeInfoItem>
+        <component :is="ResumeInfoItem" title="项目经历" class="row"> </component>
         <div v-for="item in project_experience" :key="item.key">
-          <div style="display: flex; justify-content: space-between">
+          <div style="display: flex; justify-content: space-between" class="row">
             <span
               ><span style="font-weight: bold">{{ item.fields[0].value }}</span
               >-{{ item.fields[1].value }}</span
@@ -151,67 +154,66 @@
             >
           </div>
 
-          <div>项目链接:{{ item.fields[3].value }}</div>
-          <div>项目地址:{{ item.fields[4].value }}</div>
-          <div>技术栈: {{ item.fields[5].value }}</div>
-          <div>项目描述: {{ item.fields[6].value }}</div>
+          <div class="row">项目链接:{{ item.fields[3].value }}</div>
+          <div class="row">项目地址:{{ item.fields[4].value }}</div>
+          <div class="row">技术栈: {{ item.fields[5].value }}</div>
+          <div class="row">项目描述: {{ item.fields[6].value }}</div>
         </div>
       </div>
+      <!-- 荣誉奖项 -->
       <div key="honors" :style="{ order: honorsOrder }" class="info-item" v-if="honors?.fields?.length">
-        <ResumeInfoItem title="荣誉奖项"> </ResumeInfoItem>
-
-        <div class="honor-item" v-for="item in honors.fields" :key="item.value">{{ item.value }}</div>
+        <component :is="ResumeInfoItem" title="荣誉奖项" class="row"> </component>
+        <template v-for="item in honors.fields" :key="item.value">
+          <div class="honor-item row" v-if="item.value">{{ item.value }}</div>
+        </template>
       </div>
+      <!-- 自我评价 -->
       <div
         key="personal_summary"
         :style="{ order: personal_summaryOrder }"
         class="info-item"
         v-if="personal_summary?.fields?.length"
       >
-        <ResumeInfoItem title="自我评价"> </ResumeInfoItem>
-        <div>{{ personal_summary.fields[0].value }}</div>
+        <component :is="ResumeInfoItem" title="自我评价" class="row"> </component>
+        <div class="row">{{ personal_summary.fields[0].value }}</div>
       </div>
     </transition-group>
   </div>
 </template>
 <script setup>
+import ResumeInfoItem1 from "../ResumeInfoItem1/ResumeInfoItem1.vue";
+import ResumeInfoItem2 from "../ResumeInfoItem2/ResumeInfoItem2.vue";
+import ResumeInfoItem3 from "../ResumeInfoItem3/ResumeInfoItem3.vue";
 import { storeToRefs } from "pinia";
 import { useModuleThStore } from "@/store";
-const userInfoOrder = ref(0);
-const education_experienceOrder = ref(1);
-const work_experienceOrder = ref(2);
-const skillOrder = ref(3);
-const project_experienceOrder = ref(4);
-const honorsOrder = ref(5);
-const personal_summaryOrder = ref(6);
 const moduleThStore = useModuleThStore();
+
 const { haveModules, enterIndex, haveModuleCount } = storeToRefs(moduleThStore);
-watch(
-  haveModules,
-  async (newVal) => {
-    userInfoOrder.value = newVal.findIndex((item) => item === "基本信息");
-    education_experienceOrder.value = newVal.findIndex((item) => item === "教育经历");
-    work_experienceOrder.value = newVal.findIndex((item) => item === "实习/工作经历");
-    skillOrder.value = newVal.findIndex((item) => item === "技能清单");
-    project_experienceOrder.value = newVal.findIndex((item) => item === "项目经历");
-    honorsOrder.value = newVal.findIndex((item) => item === "荣誉奖项");
-    personal_summaryOrder.value = newVal.findIndex((item) => item === "自我评价");
 
 
-
-    const items = document.querySelectorAll(".info-item");
-    items[enterIndex.value].scrollIntoView({ behavior: "smooth" });
-  },
-  { deep: true }
-);
+const userInfoOrder = computed(() => haveModules.value.findIndex(item => item === "基本信息"));
+const education_experienceOrder = computed(() => haveModules.value.findIndex(item => item === "教育经历"));
+const work_experienceOrder = computed(() => haveModules.value.findIndex(item => item === "实习/工作经历"));
+const skillOrder = computed(() => haveModules.value.findIndex(item => item === "技能清单"));
+const project_experienceOrder = computed(() => haveModules.value.findIndex(item => item === "项目经历"));
+const honorsOrder = computed(() => haveModules.value.findIndex(item => item === "荣誉奖项"));
+const personal_summaryOrder = computed(() => haveModules.value.findIndex(item => item === "自我评价"));
 watch(haveModuleCount, () => {});
-const props = defineProps(['allData']);
+const props = defineProps(["allData", "ResumeInfoItemIndex"]);
+const ResumeInfotIemMap = {
+  1: ResumeInfoItem1,
+  2: ResumeInfoItem2,
+  3: ResumeInfoItem3,
+};
+const ResumeInfoItem = computed(() => ResumeInfotIemMap[props.ResumeInfoItemIndex]);
+
 function timestampToYearMonth(timestamp) {
   const date = new Date(timestamp);
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   return `${year}-${month}`;
 }
+//数据
 const userInfo = computed(() => props.allData.find((item) => item.key === "userInfo"));
 const education_experience = computed(() => props.allData.filter((item) => item.key.includes("education_experience")));
 const work_experience = computed(() => props.allData.filter((item) => item.key.includes("work_experience")));

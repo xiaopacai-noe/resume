@@ -7,10 +7,10 @@ const routers = [
   {
     path: "/",
     name: "/",
-    redirect: "/edit",
+    redirect: "/template",
     children: [
       {
-        path: "edit",
+        path: "edit/:id",
         name: "edit",
         component: EditResume,
       },
