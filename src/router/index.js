@@ -7,7 +7,7 @@ const routers = [
   {
     path: "/",
     name: "/",
-    redirect: "/template",
+    redirect: "/template/0",
     children: [
       {
         path: "edit/:id",
