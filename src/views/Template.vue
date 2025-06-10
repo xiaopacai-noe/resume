@@ -8,7 +8,7 @@
       :class="{ active: index+1 === curUseTemplateIndex }"
     >
       <div class="img-wrapper">
-        <img :src="template.default" alt="template" />
+        <img loading="lazy"  :src="template.default" alt="template" />
 
         <div class="select-btn" @click="selectTemplate(index)">选择</div>
       </div>
