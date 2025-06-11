@@ -115,7 +115,8 @@
         <div v-for="item in work_experience" :key="item.key">
           <div style="display: flex; justify-content: space-between" class="row">
             <span
-              ><span style="font-weight: bold">{{ item.fields[0].value }}</span> - {{ item.fields[1].value }}
+              ><span style="font-weight: bold">{{ item.fields[0].value }}</span> -
+               {{ item.fields[1].value }}
               {{ item.fields[3].value }}</span
             >
             <span

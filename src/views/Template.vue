@@ -5,10 +5,18 @@
       ref="templatesRef"
       v-for="(template, index) in templates"
       :key="template.default"
-      :class="{ active: index+1 === curUseTemplateIndex }"
+      :class="{ active: index + 1 === curUseTemplateIndex }"
     >
       <div class="img-wrapper">
-        <img loading="lazy"  :src="template.default" alt="template" />
+        <div v-if="!template.default" class="skeleton-loading"></div>
+        <img
+          v-else
+          loading="lazy"
+          :src="template.default"
+          alt="template"
+          @load="imageLoaded = true"
+          @error="imageError = true"
+        />
 
         <div class="select-btn" @click="selectTemplate(index)">选择</div>
       </div>
@@ -25,7 +33,7 @@ const templatesRef = ref();
 const templates = Object.values(modules);
 const curUseTemplateIndex = JSON.parse(localStorage.getItem("templateIndex")) || 0;
 const selectTemplate = (index) => {
-  localStorage.setItem("templateIndex", JSON.stringify(index+1));
+  localStorage.setItem("templateIndex", JSON.stringify(index + 1));
   router.push(`/edit/${Math.ceil((index + 1) / 3)}-${(index % 3) + 1}`);
 };
 onMounted(() => {
@@ -52,6 +60,7 @@ onMounted(() => {
   background-color: #f9f9f9;
   border-radius: 20px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+   background: linear-gradient(135deg, #eaf5ff, #f9f9f9);  
 }
 
 .template-card {
@@ -145,6 +154,21 @@ onMounted(() => {
     padding: 2px 8px;
     border-radius: 12px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+}
+.skeleton-loading {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 100% 100%;
+  animation: loading 1.5s infinite;
+}
+@keyframes loading {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
   }
 }
 </style>
